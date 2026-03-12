@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ramadhan Kareem 🌙</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Nunito:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        font-family: "Nunito", sans-serif;
+        background: linear-gradient(
+          135deg,
+          #0d1b2a 0%,
+          #1b3a4b 50%,
+          #0d2233 100%
+        );
+        min-height: 100vh;
+      }
+
+      .font-cinzel {
+        font-family: "Cinzel Decorative", cursive;
+      }
+
+      /* stars */
+      .stars {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        background-image:
+          radial-gradient(1px 1px at 10% 15%, #fff 0%, transparent 100%),
+          radial-gradient(1px 1px at 30% 40%, #ffe082 0%, transparent 100%),
+          radial-gradient(1px 1px at 55% 10%, #fff 0%, transparent 100%),
+          radial-gradient(1px 1px at 75% 60%, #fff 0%, transparent 100%),
+          radial-gradient(1px 1px at 90% 25%, #ffe082 0%, transparent 100%),
+          radial-gradient(1px 1px at 20% 70%, #fff 0%, transparent 100%),
+          radial-gradient(1px 1px at 45% 85%, #ffe082 0%, transparent 100%),
+          radial-gradient(1px 1px at 65% 35%, #fff 0%, transparent 100%),
+          radial-gradient(1px 1px at 85% 80%, #fff 0%, transparent 100%),
+          radial-gradient(1.5px 1.5px at 5% 90%, #ffe082 0%, transparent 100%);
+        animation: twinkle 4s ease-in-out infinite alternate;
+      }
+
+      @keyframes twinkle {
+        from {
+          opacity: 0.6;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* moon */
+      .crescent {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: transparent;
+        box-shadow: -18px 5px 0 6px #ffe082;
+        display: inline-block;
+      }
+
+      /* amalan utama ramadhan */
+      .info-card {
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 224, 130, 0.25);
+        border-radius: 1rem;
+        backdrop-filter: blur(8px);
+      }
+
+      /* thr button */
+      .btn-thr {
+        background: linear-gradient(135deg, #e6a817, #f9d56e);
+        color: #1b2a00;
+        font-weight: 700;
+        border: none;
+        letter-spacing: 0.05em;
+      }
+      .btn-thr:hover {
+        color: #1b2a00;
+      }
+
+      /* modal */
+      .modal-thr .modal-content {
+        background: linear-gradient(145deg, #1b3a1a, #2d5a1b);
+        border: 2px solid #ffe082;
+        border-radius: 1.25rem;
+        color: #fff;
+      }
+      .modal-thr .modal-header {
+        border-bottom: 1px solid rgba(255, 224, 130, 0.3);
+      }
+      .modal-thr .modal-footer {
+        border-top: 1px solid rgba(255, 224, 130, 0.3);
+      }
+
+      .thr-amount {
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: #ffe082;
+        text-shadow: 0 0 20px rgba(255, 224, 130, 0.6);
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      .ornament {
+        color: #ffe082;
+        letter-spacing: 0.3em;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- stars bg -->
+    <div class="stars"></div>
+
+    <nav
+      class="navbar navbar-dark position-relative"
+      style="
+        z-index: 10;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(10px);
+      "
+    >
+      <div class="container">
+        <span class="navbar-brand font-cinzel text-warning fw-bold">
+          <i class="bi bi-moon-stars-fill me-2"></i> Ramadhan Kareem
+        </span>
+        <span class="badge rounded-pill text-bg-warning">1446 H</span>
+      </div>
+    </nav>
+
+    <!-- judul -->
+    <section class="position-relative py-2" style="z-index: 1">
+      <div class="container text-center py-3">
+        <!-- moon -->
+        <div class="mb-4">
+          <div class="crescent mx-auto"></div>
+        </div>
+
+        <h1
+          class="font-cinzel text-warning fw-bold mb-2"
+          style="font-size: clamp(1.6rem, 5vw, 3rem)"
+        >
+          Ramadhan Kareem
+        </h1>
+        <p class="text-light opacity-75 fs-5 mb-1">رَمَضَانُ كَرِيمٌ</p>
+        <p class="ornament mb-4">✦ ✦ ✦</p>
+        <p class="text-light col-md-7 mx-auto fs-6 opacity-90">
+          Selamat menjalankan ibadah puasa Ramadhan 1446 H. Semoga amal ibadah
+          kita diterima Allah SWT dan kita semua mendapat keberkahan di bulan
+          suci ini.
+        </p>
+      </div>
+    </section>
+
+    <!-- info cards -->
+    <section class="position-relative py-1" style="z-index: 1">
+      <div class="container">
+        <h2
+          class="text-center text-warning font-cinzel mb-4"
+          style="font-size: 1.3rem"
+        >
+          Amalan Utama Ramadhan
+        </h2>
+        <div class="row g-4 justify-content-center">
+          <div class="col-sm-6 col-lg-3">
+            <div class="info-card p-4 h-100 text-center text-white">
+              <div class="fs-1 mb-3">🍱</div>
+              <h5 class="text-warning fw-bold">Sahur & Berbuka</h5>
+              <p class="small opacity-75 mb-0">
+                Jangan lewatkan sahur karena di dalamnya terdapat keberkahan
+                yang besar.
+              </p>
+            </div>
+          </div>
+
+          <div class="col-sm-6 col-lg-3">
+            <div class="info-card p-4 h-100 text-center text-white">
+              <div class="fs-1 mb-3">📖</div>
+              <h5 class="text-warning fw-bold">Tadarus Al-Qur'an</h5>
+              <p class="small opacity-75 mb-0">
+                Perbanyak membaca Al-Qur'an di bulan yang penuh berkah ini.
+              </p>
+            </div>
+          </div>
+
+          <div class="col-sm-6 col-lg-3">
+            <div class="info-card p-4 h-100 text-center text-white">
+              <div class="fs-1 mb-3">🧎🏻</div>
+              <h5 class="text-warning fw-bold">Sholat Tarawih</h5>
+              <p class="small opacity-75 mb-0">
+                Laksanakan sholat tarawih berjamaah di masjid terdekat.
+              </p>
+            </div>
+          </div>
+
+          <div class="col-sm-6 col-lg-3">
+            <div class="info-card p-4 h-100 text-center text-white">
+              <div class="fs-1 mb-3">💰</div>
+              <h5 class="text-warning fw-bold">Sedekah & Zakat</h5>
+              <p class="small opacity-75 mb-0">
+                Perbanyak sedekah dan bayar zakat fitrah sebelum Idul Fitri.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- thr button -->
+    <section class="position-relative py-4" style="z-index: 1">
+      <div class="container text-center">
+        <p class="text-light opacity-75 mb-3 small">Klaim THRmu sekarang!</p>
+        <button
+          class="btn btn-thr btn-lg px-5 py-3 rounded-pill font-cinzel"
+          data-bs-toggle="modal"
+          data-bs-target="#modalTHR"
+        >
+          <i class="bi bi-envelope-heart-fill me-2"></i>Klaim THR
+        </button>
+      </div>
+    </section>
+
+    <!-- modal -->
+    <div
+      class="modal fade modal-thr"
+      id="modalTHR"
+      tabindex="-1"
+      aria-labelledby="modalTHRLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg">
+          <div class="modal-header border-0 pb-0">
+            <h5
+              class="modal-title w-100 text-center text-warning font-cinzel"
+              id="modalTHRLabel"
+            >
+              🎉 Selamat! 🎉
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+
+          <div class="modal-body text-center py-4">
+            <div class="fs-1 mb-3" id="confetti-anim">🎊</div>
+
+            <p class="fs-5 text-white fw-semibold mb-1">
+              Selamat, kamu mendapatkan
+            </p>
+            <div class="thr-amount my-3">T H R</div>
+            <p class="text-warning-emphasis opacity-75">Tunjangan Hari Raya</p>
+
+            <hr class="border-warning opacity-25 my-3" />
+
+            <p class="text-light opacity-90 small">
+              Semoga THR-mu berkah dan bermanfaat. <br />
+              Selamat merayakan Idul Fitri bersama orang-orang tersayang! 🌙✨
+            </p>
+          </div>
+
+          <div
+            class="modal-footer flex-column align-items-center border-0 pt-0 gap-2"
+          >
+            <button
+              type="button"
+              class="btn btn-thr px-4 rounded-pill"
+              data-bs-dismiss="modal"
+            >
+              <i class="bi bi-check2-circle me-1"></i>Terima Kasih!
+            </button>
+            <small class="text-light opacity-50"
+              >2311102205_Raifanka Raisa Ramadhan_Tugas 1</small
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      // confetti saat modal THR muncul
+      const CONFETTI_EMOJIS = ["🎊", "🎉", "🎁", "💛", "🌟", "✨", "🥳"];
+      let confettiInterval = null;
+      const modalEl = document.getElementById("modalTHR");
+
+      modalEl.addEventListener("show.bs.modal", () => {
+        let i = 0;
+        const el = document.getElementById("confetti-anim");
+        confettiInterval = setInterval(() => {
+          el.textContent = CONFETTI_EMOJIS[i % CONFETTI_EMOJIS.length];
+          i++;
+        }, 400);
+      });
+
+      modalEl.addEventListener("hidden.bs.modal", () => {
+        clearInterval(confettiInterval);
+        document.getElementById("confetti-anim").textContent = "🎊";
+      });
+    </script>
+  </body>
+</html>
