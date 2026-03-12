@@ -1,1 +1,3 @@
-# 2311102205_praktikum_abp_02
+Raifanka Raisa Ramadhan
+2311102205
+S1IF-11-REG02
