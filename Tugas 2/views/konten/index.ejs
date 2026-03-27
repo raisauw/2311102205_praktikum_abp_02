@@ -1,0 +1,222 @@
+<%- include('../partials/header') %>
+
+<!-- Toolbar -->
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+  <p class="text-muted mb-0">Semua konten TikTok kamu ada di sini. Atur, edit, dan pantau statusnya.</p>
+  <a href="/konten/tambah" class="btn btn-yellow rounded-pill px-4">
+    <i class="bi bi-plus-lg me-2"></i>Tambah Konten
+  </a>
+</div>
+
+<!-- Table Card -->
+<div class="pf-card">
+  <div class="pf-card-head">
+    <span><i class="bi bi-collection-play-fill me-2"></i>Daftar Konten TikTok</span>
+    <span class="text-muted small" id="tableCountInfo"></span>
+  </div>
+  <div class="pf-card-body">
+    <div class="table-responsive">
+      <table id="tblKonten" class="table table-hover align-middle w-100">
+        <thead>
+          <tr>
+            <th width="60">No</th>
+            <th width="60">ID</th>
+            <th>Judul Konten TikTok</th>
+            <th width="200">Jadwal Upload</th>
+            <th width="140">Link Barang/Ref</th>
+            <th width="120">Status</th>
+            <th width="110">Aksi</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Detail -->
+<div class="modal fade" id="modalDetail" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modal-pf">
+      <div class="modal-header border-0">
+        <h5 class="modal-title"><i class="bi bi-play-circle-fill me-2 text-yellow"></i>Detail Konten</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="detailBody">
+        <div class="text-center py-4"><div class="spinner-border text-yellow"></div></div>
+      </div>
+      <div class="modal-footer border-0">
+        <button class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Tutup</button>
+        <a href="#" id="btnEditDetail" class="btn btn-yellow rounded-pill">
+          <i class="bi bi-pencil me-1"></i>Edit
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>
+
+<script>
+$(function(){
+
+  // ─── Inisialisasi DataTable dengan sumber data JSON ────────
+  var table = $('#tblKonten').DataTable({
+    ajax: {
+      url     : '/konten/api/data',
+      type    : 'GET',
+      dataSrc : 'data'
+    },
+    columns: [
+      // No (urutan tampil)
+      {
+        data: null,
+        render: function(d, t, r, m){ return m.row + 1; },
+        orderable: false
+      },
+      // ID konten
+      {
+        data: 'id',
+        render: function(d){
+          var num = d.replace('ktk-','');
+          return '<span class="id-badge">#' + num + '</span>';
+        }
+      },
+      // Judul
+      {
+        data: 'judul',
+        render: function(d){
+          return '<span class="judul-text">' + d + '</span>';
+        }
+      },
+      // Jadwal Upload
+      {
+        data: 'jadwal',
+        render: function(d){
+          if(!d) return '<span class="text-muted">-</span>';
+          var dt   = new Date(d);
+          var tgl  = dt.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
+          var jam  = dt.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+          return '<div class="jadwal-cell"><span class="jc-date"><i class="bi bi-calendar3 me-1"></i>' + tgl + '</span>' +
+                 '<span class="jc-time"><i class="bi bi-clock me-1"></i>' + jam + ' WIB</span></div>';
+        }
+      },
+      // Link Barang
+      {
+        data: 'linkBarang',
+        render: function(d){
+          if(!d || d.trim() === ''){
+            return '<span class="text-muted fw-bold">–</span>';
+          }
+          return '<a href="' + d + '" target="_blank" class="link-ref" title="' + d + '">' +
+                 '<i class="bi bi-link-45deg me-1"></i>Lihat Link</a>';
+        }
+      },
+      // Status
+      {
+        data: 'status',
+        render: function(d){
+          var cls = d.toLowerCase();
+          return '<span class="status-pill sp-' + cls + '">' + d + '</span>';
+        }
+      },
+      // Aksi
+      {
+        data: 'id',
+        orderable: false,
+        render: function(id){
+          return '<div class="d-flex gap-1">' +
+            '<button class="btn-aksi btn-view"  data-id="' + id + '" title="Detail"><i class="bi bi-eye-fill"></i></button>' +
+            '<a href="/konten/edit/' + id + '" class="btn-aksi btn-edit" title="Edit"><i class="bi bi-pencil-fill"></i></a>' +
+            '<button class="btn-aksi btn-del"   data-id="' + id + '" title="Hapus"><i class="bi bi-trash-fill"></i></button>' +
+          '</div>';
+        }
+      }
+    ],
+    language : { url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/id.json' },
+    dom      : '<"row align-items-center mb-3"<"col-md-6"B><"col-md-6 text-md-end"f>>rt<"row align-items-center mt-3"<"col-md-6"i><"col-md-6"p>>',
+    buttons  : [
+      { extend:'excel', className:'btn btn-sm btn-outline-success rounded-pill me-1', text:'<i class="bi bi-file-earmark-excel me-1"></i>Excel' },
+      { extend:'csv',   className:'btn btn-sm btn-outline-info rounded-pill me-1',    text:'<i class="bi bi-filetype-csv me-1"></i>CSV' },
+      { extend:'print', className:'btn btn-sm btn-outline-secondary rounded-pill',    text:'<i class="bi bi-printer me-1"></i>Print' }
+    ],
+    pageLength : 10,
+    order      : [[3, 'asc']],
+    drawCallback: function(){
+      var info = this.api().page.info();
+      $('#tableCountInfo').text(info.recordsTotal + ' konten');
+    }
+  });
+
+  // ─── Tombol Detail / View ──────────────────────────────────
+  $('#tblKonten').on('click', '.btn-view', function(){
+    var id = $(this).data('id');
+    $('#detailBody').html('<div class="text-center py-4"><div class="spinner-border text-yellow"></div></div>');
+    $('#btnEditDetail').attr('href', '/konten/edit/' + id);
+    $('#modalDetail').modal('show');
+
+    $.getJSON('/konten/detail/' + id, function(res){
+      if(!res.success){ return; }
+      var k    = res.data;
+      var cls  = k.status.toLowerCase();
+      var link = (k.linkBarang && k.linkBarang.trim() !== '')
+        ? '<a href="' + k.linkBarang + '" target="_blank" class="link-ref"><i class="bi bi-link-45deg me-1"></i>' + k.linkBarang + '</a>'
+        : '<span class="text-muted">–</span>';
+
+      var dt  = new Date(k.jadwal);
+      var tgl = dt.toLocaleDateString('id-ID',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+      var jam = dt.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+
+      $('#detailBody').html(
+        '<div class="detail-wrap">' +
+          '<div class="dw-status mb-3"><span class="status-pill sp-' + cls + ' sp-lg">' + k.status + '</span></div>' +
+          '<h5 class="dw-judul">' + k.judul + '</h5>' +
+          '<div class="dw-row"><span class="dw-lbl"><i class="bi bi-calendar3"></i> Jadwal</span>' +
+            '<span class="dw-val">' + tgl + ', ' + jam + ' WIB</span></div>' +
+          '<div class="dw-row"><span class="dw-lbl"><i class="bi bi-link-45deg"></i> Link Barang</span>' +
+            '<span class="dw-val">' + link + '</span></div>' +
+          '<div class="dw-row"><span class="dw-lbl"><i class="bi bi-hash"></i> ID</span>' +
+            '<span class="dw-val"><code>' + k.id + '</code></span></div>' +
+        '</div>'
+      );
+    });
+  });
+
+  // ─── Tombol Hapus ──────────────────────────────────────────
+  $('#tblKonten').on('click', '.btn-del', function(){
+    var id      = $(this).data('id');
+    var rowData = table.row($(this).closest('tr')).data();
+    var judul   = rowData ? rowData.judul : 'konten ini';
+
+    Swal.fire({
+      title            : 'Hapus Konten?',
+      html             : '<strong>"' + judul + '"</strong><br><small>akan dihapus permanen.</small>',
+      icon             : 'warning',
+      showCancelButton : true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor : '#6b7280',
+      confirmButtonText : '<i class="bi bi-trash me-1"></i>Hapus!',
+      cancelButtonText  : 'Batal',
+      customClass       : { popup: 'swal-pf' }
+    }).then(function(result){
+      if(result.isConfirmed){
+        $.ajax({
+          url    : '/konten/hapus/' + id,
+          type   : 'DELETE',
+          success: function(res){
+            if(res.success){
+              table.ajax.reload(null, false);
+              showToast(res.message, 'success');
+            } else {
+              showToast(res.message, 'danger');
+            }
+          }
+        });
+      }
+    });
+  });
+
+});
+</script>
+</body>
+</html>
