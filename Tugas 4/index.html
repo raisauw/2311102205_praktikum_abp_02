@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tugas 4 AJAX</title>
+  </head>
+  <body>
+    <h1>Ambil Data dari Server</h1>
+    <button id="btn-tampil">Tampilkan Profil</button>
+    <div id="hasil-profil">
+      <p>Data akan ditampilkan di sini...</p>
+    </div>
+
+    <script>
+      const btn = document.getElementById("btn-tampil");
+      const hasilDiv = document.getElementById("hasil-profil");
+
+      btn.addEventListener("click", function () {
+        fetch("data.php")
+          .then((response) => response.json())
+          .then((data) => {
+            hasilDiv.innerHTML = `
+                        <p><strong>My name gwe:</strong> ${data.name}</p>
+                        <p><strong>nomor mhs:</strong> ${data.nim}</p>
+                        <p><strong>almet:</strong> ${data.almet}</p>
+                    `;
+          })
+          .catch((error) => {
+            hasilDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+          });
+      });
+    </script>
+  </body>
+</html>

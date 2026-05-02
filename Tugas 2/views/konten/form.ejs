@@ -1,0 +1,218 @@
+<%- include('../partials/header') %>
+
+<div class="row justify-content-center">
+  <div class="col-xl-7 col-lg-9">
+
+    <div class="alert-pf mb-4">
+      <i class="bi bi-info-circle-fill me-2"></i>
+      <% if (action === 'edit') { %>
+        Ubah data yang diperlukan lalu klik <strong>Simpan Perubahan</strong>.
+      <% } else { %>
+        Kolom bertanda <span class="text-danger">*</span> wajib diisi.
+        Link barang boleh dikosongkan jika tidak ada.
+      <% } %>
+    </div>
+
+    <div class="pf-card">
+      <div class="pf-card-head">
+        <% if (action === 'edit') { %>
+          <span><i class="bi bi-pencil-square me-2"></i>Edit Konten</span>
+        <% } else { %>
+          <span><i class="bi bi-plus-square-fill me-2"></i>Tambah Konten TikTok Baru</span>
+        <% } %>
+      </div>
+      <div class="pf-card-body">
+
+        <form id="formKonten" novalidate>
+
+          <!-- Judul Konten -->
+          <div class="mb-4">
+            <label class="form-label-pf">Judul Konten TikTok <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-camera-video-fill"></i></span>
+              <input type="text" name="judul" id="judul" class="form-control form-control-pf"
+                placeholder="cth. Review Outfit OOTD Summer 2024..."
+                value="<%= konten ? konten.judul : '' %>" />
+            </div>
+            <div class="err-msg" id="errJudul"></div>
+          </div>
+
+          <!-- Jadwal Upload -->
+          <div class="mb-4">
+            <label class="form-label-pf">Jadwal Upload <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-calendar2-check-fill"></i></span>
+              <input type="datetime-local" name="jadwal" id="jadwal" class="form-control form-control-pf"
+                value="<%= konten ? konten.jadwal : '' %>" />
+            </div>
+            <div class="err-msg" id="errJadwal"></div>
+          </div>
+
+          <!-- Link Barang / Referensi -->
+          <div class="mb-4">
+            <label class="form-label-pf">Link Barang / Referensi <span class="text-muted">(opsional)</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-link-45deg"></i></span>
+              <input type="url" name="linkBarang" id="linkBarang" class="form-control form-control-pf"
+                placeholder="https://shopee.co.id/... (kosongkan jika tidak ada)"
+                value="<%= konten ? konten.linkBarang : '' %>" />
+            </div>
+            <div class="form-text">Biarkan kosong jika tidak punya referensi link, akan tampil sebagai "–"</div>
+            <div class="err-msg" id="errLink"></div>
+          </div>
+
+          <!-- Status -->
+          <div class="mb-4">
+            <label class="form-label-pf">Status <span class="text-danger">*</span></label>
+            <div class="status-picker" id="statusPicker">
+
+              <input type="radio" name="status" id="sIdea" value="Idea"
+                class="d-none" <%= (!konten || konten.status==='Idea') ? 'checked' : '' %> />
+              <label for="sIdea" class="sp-option sp-idea">
+                <i class="bi bi-lightbulb-fill"></i> Idea
+              </label>
+
+              <input type="radio" name="status" id="sShooting" value="Shooting"
+                class="d-none" <%= (konten && konten.status==='Shooting') ? 'checked' : '' %> />
+              <label for="sShooting" class="sp-option sp-shooting">
+                <i class="bi bi-camera-video-fill"></i> Shooting
+              </label>
+
+              <input type="radio" name="status" id="sEditing" value="Editing"
+                class="d-none" <%= (konten && konten.status==='Editing') ? 'checked' : '' %> />
+              <label for="sEditing" class="sp-option sp-editing">
+                <i class="bi bi-scissors"></i> Editing
+              </label>
+
+              <input type="radio" name="status" id="sReady" value="Ready"
+                class="d-none" <%= (konten && konten.status==='Ready') ? 'checked' : '' %> />
+              <label for="sReady" class="sp-option sp-ready">
+                <i class="bi bi-check2-circle"></i> Ready
+              </label>
+
+              <input type="radio" name="status" id="sPosted" value="Posted"
+                class="d-none" <%= (konten && konten.status==='Posted') ? 'checked' : '' %> />
+              <label for="sPosted" class="sp-option sp-posted">
+                <i class="bi bi-tiktok"></i> Posted
+              </label>
+
+            </div>
+            <div class="err-msg" id="errStatus"></div>
+          </div>
+
+          <!-- Tombol Aksi -->
+          <div class="form-actions mt-4 pt-3 border-top">
+            <a href="/konten" class="btn btn-outline-secondary rounded-pill px-4">
+              <i class="bi bi-arrow-left me-2"></i>Kembali
+            </a>
+            <button type="submit" class="btn btn-yellow rounded-pill px-4" id="btnSubmit">
+              <span class="spinner-border spinner-border-sm me-2 d-none" id="spinnerBtn"></span>
+              <i class="bi bi-save-fill me-2" id="iconBtn"></i>
+              <span id="textBtn"><%= action === 'edit' ? 'Simpan Perubahan' : 'Simpan Konten' %></span>
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>
+
+<script>
+$(function(){
+  var isEdit  = '<%= action %>' === 'edit';
+  var editId  = '<%= konten ? konten.id : "" %>';
+  var apiUrl  = isEdit ? '/konten/edit/' + editId : '/konten/tambah';
+  var btnText = isEdit ? 'Simpan Perubahan' : 'Simpan Konten';
+
+  // Highlight status yang aktif saat load
+  function updateStatusUI(){
+    $('.sp-option').removeClass('selected');
+    $('input[name=status]:checked').each(function(){
+      $('label[for=' + $(this).attr('id') + ']').addClass('selected');
+    });
+  }
+  updateStatusUI();
+
+  $('input[name=status]').on('change', function(){
+    updateStatusUI();
+    $('#errStatus').text('').hide();
+  });
+
+  // ─── jQuery Validate ───────────────────────────────────────
+  $('#formKonten').validate({
+    rules: {
+      judul  : { required: true, minlength: 3, maxlength: 200 },
+      jadwal : { required: true },
+      status : { required: true }
+    },
+    messages: {
+      judul  : { required: 'Judul konten wajib diisi', minlength: 'Minimal 3 karakter' },
+      jadwal : { required: 'Jadwal upload wajib diisi' },
+      status : { required: 'Pilih status konten' }
+    },
+    errorPlacement: function(error, element){
+      var map = { judul:'errJudul', jadwal:'errJadwal', status:'errStatus' };
+      var f   = element.attr('name');
+      if(map[f]) $('#' + map[f]).text(error.text()).show();
+    },
+    highlight   : function(el){ $(el).addClass('is-invalid'); },
+    unhighlight : function(el){ $(el).removeClass('is-invalid'); },
+    submitHandler: function(form, e){
+      e.preventDefault();
+      submitForm();
+    }
+  });
+
+  // ─── Submit via jQuery AJAX ────────────────────────────────
+  function submitForm(){
+    $('#spinnerBtn').removeClass('d-none');
+    $('#iconBtn').addClass('d-none');
+    $('#btnSubmit').prop('disabled', true);
+    $('#textBtn').text('Menyimpan...');
+
+    var payload = {
+      judul     : $('#judul').val().trim(),
+      jadwal    : $('#jadwal').val(),
+      linkBarang: $('#linkBarang').val().trim(),
+      status    : $('input[name=status]:checked').val()
+    };
+
+    $.ajax({
+      url    : apiUrl,
+      type   : 'POST',
+      data   : payload,
+      success: function(res){
+        $('#spinnerBtn').addClass('d-none');
+        $('#iconBtn').removeClass('d-none');
+        $('#btnSubmit').prop('disabled', false);
+        $('#textBtn').text(btnText);
+
+        if(res.success){
+          Swal.fire({
+            icon : 'success',
+            title: 'Berhasil!',
+            text : res.message,
+            timer: 2000,
+            showConfirmButton: false,
+            customClass: { popup: 'swal-pf' }
+          }).then(function(){ window.location.href = '/konten'; });
+        } else {
+          Swal.fire({ icon:'error', title:'Gagal', text: res.message, customClass:{ popup:'swal-pf' } });
+        }
+      },
+      error: function(){
+        $('#spinnerBtn').addClass('d-none');
+        $('#iconBtn').removeClass('d-none');
+        $('#btnSubmit').prop('disabled', false);
+        $('#textBtn').text(btnText);
+        showToast('Koneksi error, coba lagi.', 'danger');
+      }
+    });
+  }
+});
+</script>
+</body>
+</html>
