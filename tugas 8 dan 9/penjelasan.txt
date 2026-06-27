@@ -1,1 +1,12 @@
+Penjelasan Singkat Tiap Widget
 
+1. MaterialApp: Widget root yang membungkus seluruh aplikasi dan menyediakan konfigurasi dasar seperti tema (theme) dan halaman utama (home).
+2. Scaffold: Menyediakan struktur dasar tampilan halaman, terdiri dari AppBar dan body.
+3. AppBar: Menampilkan bar judul di bagian atas halaman, berisi teks "Notifikasi & API Perangkat Keras".
+4. Column: Menyusun widget-widget secara vertikal dari atas ke bawah, digunakan untuk mengatur tata letak area preview foto dan kedua tombol.
+5. Expanded: Membuat area preview foto mengisi sisa ruang yang tersedia secara fleksibel di dalam Column.
+6. Container: Membentuk kotak/bingkai untuk area preview foto, dilengkapi dengan border menggunakan BoxDecoration.
+7. Center & Text: Menampilkan teks "Belum ada foto dipilih" di tengah kotak preview ketika belum ada foto yang dipilih.
+8. ClipRRect & Image.file(): Menampilkan foto yang berhasil diambil/dipilih dari penyimpanan lokal, dengan sudut yang dibuat melengkung .(rounded corner).
+9. ElevatedButton.icon: Tombol dengan kombinasi ikon dan teks yang digunakan untuk dua aksi: "Ambil Foto (Kamera)" dan "Pilih Foto (Galeri)".
+10. SizedBox: Memberikan jarak (spacing) antar elemen, misalnya jarak antara kotak preview dan tombol, serta antar tombol.
