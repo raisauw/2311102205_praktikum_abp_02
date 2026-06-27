@@ -1,1 +1,47 @@
+PENJELASAN IMPLEMENTASI BLOC/CUBIT
 
+1. Mengapa Cubit (bukan BLoC murni)
+
+Aplikasi ini menggunakan Cubit, yaitu versi BLoC yang lebih sederhana. Cubit mengelola state lewat pemanggilan method secara langsung, sedangkan BLoC murni mengelola state lewat mekanisme Event yang harus di-dispatch. Karena requirement tugas membolehkan penggunaan BLoC atau Cubit, Cubit dipilih karena cukup untuk logika tambah/hapus produk dari keranjang yang relatif sederhana, tanpa mengurangi konsep state management reactive-nya.
+
+2. CartCubit sebagai State Holder
+
+CartCubit adalah class yang extends Cubit<List<Product>>, artinya state yang dikelola berupa daftar produk (List<Product>) yang ada di keranjang.
+
+- State awal (super([])) adalah keranjang kosong.
+- addToCart(product) membuat list baru hasil gabungan state lama dengan produk baru, lalu memanggil emit() untuk mempublikasikan state baru tersebut.
+- removeFromCart(index) membuat copy dari state saat ini, menghapus item pada index tertentu, lalu emit() state yang sudah diperbarui.
+- clearCart() mengosongkan kembali state dengan emit([]).
+- totalPrice adalah getter (bukan bagian dari state) yang menghitung total harga dari isi keranjang saat ini, dipakai untuk ditampilkan di halaman keranjang.
+
+Prinsip penting di sini: Cubit tidak pernah memodifikasi state lama secara langsung (immutable). Setiap perubahan selalu membuat list baru lalu di-emit(). Ini memastikan setiap perubahan terdeteksi dengan benar oleh widget yang mendengarkan.
+
+3. BlocProvider - Menyediakan Cubit ke Widget Tree
+
+BlocProvider(
+  create: (context) => CartCubit(),
+  child: MaterialApp(...),
+)
+
+BlocProvider diletakkan di root aplikasi (membungkus MaterialApp), sehingga satu instance CartCubit yang sama bisa diakses dari halaman manapun di seluruh aplikasi, baik dari ProductPage maupun CartPage, tanpa perlu passing data manual antar halaman.
+
+4. BlocBuilder - Membangun Ulang UI Saat State Berubah
+
+BlocBuilder<CartCubit, List<Product>> digunakan di dua tempat:
+
+- Di AppBar halaman produk: menampilkan ikon keranjang dengan badge jumlah item, yang otomatis update setiap kali addToCart() dipanggil. Inilah yang memenuhi requirement "jumlah item ditampilkan secara real-time".
+- Di halaman CartPage: menampilkan seluruh isi keranjang dalam ListView, yang otomatis rebuild setiap kali ada produk ditambah atau dihapus.
+
+BlocBuilder bekerja dengan cara mendengarkan emit() dari Cubit. Setiap kali emit() dipanggil, seluruh widget di dalam builder akan di-rebuild dengan state terbaru, tanpa perlu setState() manual.
+
+5. context.read vs BlocBuilder
+
+- context.read<CartCubit>() dipakai saat hanya perlu memanggil method (seperti addToCart, removeFromCart, clearCart) tanpa perlu UI tersebut rebuild sendiri akibat pemanggilan itu.
+- BlocBuilder dipakai saat widget tersebut perlu rebuild otomatis mengikuti perubahan state, misalnya badge jumlah item dan daftar isi keranjang.
+
+6. Alur Kerja Keseluruhan
+
+1) User menekan tombol "Tambah" pada salah satu produk, context.read<CartCubit>().addToCart(product) dipanggil.
+2) Cubit emit() state baru (list keranjang yang sudah ditambah).
+3) Semua BlocBuilder yang terhubung ke CartCubit otomatis rebuild. Badge jumlah di ikon keranjang langsung bertambah, dan jika user sedang membuka CartPage, daftar di sana juga otomatis terupdate.
+4) Hal yang sama berlaku untuk hapus produk dan hapus semua produk.
