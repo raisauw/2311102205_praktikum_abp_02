@@ -1,1 +1,34 @@
+PENJELASAN HASIL IMPLEMENTASI
 
+1. State Management dengan Provider
+
+Aplikasi menggunakan package Provider untuk mengelola state data tugas (To-Do List) secara terpusat, tanpa perlu passing data manual antar widget.
+
+- TaskProvider (class yang extends ChangeNotifier) menyimpan daftar tugas dalam bentuk List<String> dan menyediakan dua method utama:
+  - addTask() : menambahkan tugas baru ke dalam list
+  - clearAllTasks() : menghapus seluruh tugas dari list
+- Setiap kali data berubah, notifyListeners() dipanggil agar seluruh widget yang "mendengarkan" (subscribe) otomatis melakukan rebuild dan menampilkan data terbaru.
+- TaskProvider didaftarkan di root aplikasi melalui ChangeNotifierProvider di main.dart, sehingga state-nya bisa diakses dari halaman manapun.
+- Pada UI, context.watch<TaskProvider>() digunakan untuk membaca data tugas (otomatis rebuild saat berubah), sedangkan context.read<TaskProvider>() digunakan untuk memanggil method tanpa perlu rebuild (misalnya saat menekan tombol tambah/hapus).
+
+2. Integrasi Firebase Cloud Messaging (FCM)
+
+Aplikasi dihubungkan ke Firebase melalui FlutterFire CLI, yang menghasilkan file firebase_options.dart sebagai konfigurasi koneksi ke project Firebase.
+
+- NotificationService menangani seluruh logika notifikasi:
+  - Meminta izin notifikasi kepada pengguna (requestPermission), wajib untuk Android 13 ke atas
+  - Mengambil FCM Token, yaitu identitas unik perangkat yang digunakan untuk mengirim notifikasi secara langsung ke device tersebut melalui Firebase Console atau Postman
+  - Mendengarkan event FirebaseMessaging.onMessage, yang berjalan ketika notifikasi diterima saat aplikasi sedang dibuka (foreground)
+- Karena notifikasi FCM secara default tidak langsung tampil sebagai pop-up saat aplikasi foreground, digunakan flutter_local_notifications untuk menampilkannya secara manual sebagai notifikasi sistem Android.
+
+3. Alur Kerja Aplikasi
+
+1) Saat aplikasi dijalankan, Firebase diinisialisasi dan FCM Token dihasilkan.
+2) Pengguna mengetik tugas baru di TextField, lalu menekan tombol tambah, TaskProvider.addTask() dipanggil, UI otomatis menampilkan tugas baru di ListView.
+3) Pengguna dapat menekan ikon hapus di AppBar, TaskProvider.clearAllTasks() dipanggil, seluruh tugas terhapus dari tampilan.
+4) Pengujian notifikasi dilakukan dengan mengirim pesan via Firebase Console (Cloud Messaging) menggunakan FCM Token perangkat sebagai target, notifikasi diterima dan ditampilkan di perangkat.
+
+4. Kendala Teknis yang Ditemukan dan Solusi
+
+- Dependency flutter_local_notifications membutuhkan core library desugaring diaktifkan di Gradle (isCoreLibraryDesugaringEnabled = true dan penambahan dependency desugar_jdk_libs) agar dapat dikompilasi di Android.
+- flutterfire configure membutuhkan Firebase CLI terinstall terlebih dahulu sebagai prasyarat sebelum project Flutter dapat dihubungkan ke Firebase.
